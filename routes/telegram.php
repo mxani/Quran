@@ -8,10 +8,17 @@ use XB\theory\Shoot;
 Shoot::trigger(function($u){
     return true;
 },function($u){
-    Storage::put("updates/last", "$u\n\n".
+    Storage::put("updates/last.json", "$u\n\n".
     file_get_contents('php://input')."\n\n"
     );
 });
 
 // Shoot::trigger(function($u){return true;},'sayHello@test');
 
+Shoot::trigger(function(&$u){
+    return !empty($u->message->text) && $u->message->text=='/start';
+},'start@showMenu');
+
+Shoot::trigger(function(&$u){
+    return !empty($u->message->text) && $u->message->text=='درباره ما';
+},'start@aboutUs');
