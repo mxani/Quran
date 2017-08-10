@@ -2,5 +2,5 @@
 
 return [
     'bot-url'=>'https://api.telegram.org/bot',
-    'bot-token'=>'215119625:AAGEbfmB-YDedqPIBGdcs6euPU6ro3eSlmc'
+    'bot-token'=>'403409403:AAGq3Shr9KFzI2MWTTQOoerikFQtRGeOMtI'
 ];

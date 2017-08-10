@@ -25,7 +25,7 @@ $this->trigger(function(&$u){
 },'start@showMenu');
 
 $this->trigger(function(&$u){
-    return !empty($u->message->text) && $u->message->text=='درباره ما';
+    return !empty($u->message->text) && $u->message->text=='درباره ربات';
 },'start@aboutUs');
 
 $this->trigger(function(&$u){
