@@ -15,7 +15,7 @@ class start extends Magazine {
 		$member = Member::firstOrCreate( [
 			'user_id'    => $u->message->from->id,
 			'first_name' => $u->message->from->first_name,
-			'username'   => $u->message->from->username,
+			'username'   => empty($u->message->from->username)?'':$u->message->from->username,
 		] );
 
 
