@@ -11,12 +11,14 @@ use XB\telegramObjects\KeyboardButton;
 
 class start extends Magazine {
 	public function showMenu( $u ) {
-
-		$member = Member::firstOrCreate( [
-			'user_id'    => $u->message->from->id,
-			'first_name' => $u->message->from->first_name,
-			'username'   => empty($u->message->from->username)?'':$u->message->from->username,
-		] );
+		if(Member::where('user_id',$u->message->from->id)->count()){
+			Member::create( [
+				'user_id'    => $u->message->from->id,
+				'first_name' => $u->message->from->first_name,
+				'username'   => empty($u->message->from->username)?'':$u->message->from->username,
+				'last_name'   => empty($u->message->from->last_name)?'':$u->message->from->last_name,
+			] );
+		}
 
 
 		$send = new sendMessage( [
