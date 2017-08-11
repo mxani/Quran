@@ -11,7 +11,7 @@ use XB\telegramObjects\KeyboardButton;
 
 class start extends Magazine {
 	public function showMenu( $u ) {
-		if(Member::where('user_id',$u->message->from->id)->count()){
+		if(Member::where('user_id',$u->message->from->id)->count()==0){
 			Member::create( [
 				'user_id'    => $u->message->from->id,
 				'first_name' => $u->message->from->first_name,
