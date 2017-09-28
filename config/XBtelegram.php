@@ -2,5 +2,6 @@
 
 return [
     'bot-url'=>'https://api.telegram.org/bot',
-    'bot-token'=>'403409403:AAGq3Shr9KFzI2MWTTQOoerikFQtRGeOMtI'
+    'meeting-storage'=>'file',
+    'bot-token'=>'305312702:AAGQZkMBclxKJiKnQufS38pPXx1mv_n3cWE'
 ];
