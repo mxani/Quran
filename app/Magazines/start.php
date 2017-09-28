@@ -49,7 +49,7 @@ class start extends Magazine {
 		$send = new sendMessage( [
 			'chat_id'    => $u->message->chat->id,
 			'text'       => "ربات قرآنی نورالمبین" .
-			                "\n نسخه 1.0.0" . "\n\n ارتبا با پشتیبانی : " ."@moctabaxani\n",
+			                "\n نسخه 1.1.0" . "\n\n ارتباط با پشتیبانی : " ."@moctabaxani\n",
 			'parse_mode' => 'html',
 		] );
 		if ( ! $send() ) {
