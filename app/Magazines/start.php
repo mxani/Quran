@@ -28,8 +28,10 @@ class start extends Magazine {
 			'reply_markup' => json_encode( [
 				'keyboard'          => [
 //					[ 'ختم قران' ],
-//					[ 'ختم صلوات' ],
-					[ 'نمایش قرآن' ],
+//					
+					[ 'فهرست سوره ها' ],
+					[ 'نمایش تصویر قرآن' ],
+			    	['نمایش متن قرآن'],
 					[ 'درباره ربات' ],
 				],
 				'resize_keyboard'   => true,
