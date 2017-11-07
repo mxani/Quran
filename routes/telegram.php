@@ -2,13 +2,13 @@
 use XB\theory\Shoot;
 use XB\telegramMethods\sendMessage;
 
-$this->trigger(function($u){
-    return true;
-},function($u){
-    Storage::put("updates/last.json", "$u\n\n".
-    file_get_contents('php://input')."\n\n"
-    );
-});
+// $this->trigger(function($u){
+//     return true;
+// },function($u){
+//     Storage::put("updates/last.json", "$u\n\n".
+//     file_get_contents('php://input')."\n\n"
+//     );
+// });
 
 
 $this->trigger(function(&$u){
