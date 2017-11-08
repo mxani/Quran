@@ -114,6 +114,18 @@ class quran extends Magazine
   
     public function listshow($u)
     {
+        if ($this->detect->type=='callback_query'){
+            $send=new editMessageText([
+                'chat_id'=>$this->update->callback_query->message->chat->id,
+                'message_id'=>$this->update->callback_query->message->message_id,
+                'text'=>"فهرست سوره ها ",
+                'parse_mode'=> "html",
+                'reply_markup'=> $this->keygnt(),
+    
+            ]);
+            $send();   
+        }
+        else{ 
         $send=new sendMessage([
             'chat_id'=>$u->message->from->id,
             'text'=>"فهرست سوره ها ",
@@ -122,6 +134,7 @@ class quran extends Magazine
 
         ]);
         $send();
+        }
     }
 
     public function secendlistshow($u)
@@ -334,56 +347,149 @@ class quran extends Magazine
     
             $data=\App\suraList::get();
             $keys=[];
-        for ($i=2; $i<=60;$i+=3) {
+      if (!empty ($this->detect->data) && $this->detect->data->text=="next"."1")
+      {
+      $valuei=31;
+      $max=56;
+      $x=2;$b=1;
+      }
+      elseif(!empty ($this->detect->data) && $this->detect->data->text=="next"."2")
+      {
+        $valuei=59;
+        $max=84;
+       $x=3;
+       $b=1;
+      }
+      elseif(!empty ($this->detect->data) && $this->detect->data->text=="next"."3")
+      { 
+        $valuei=87;
+        $max=112;
+        $x=4;$b=2;
+      }
+      else
+      {
+        $valuei=3;
+        $max=28;
+        $x=1;$b=0;
+      }
+        for ($i=$valuei; $i<=$max;$i+=4) {
 			$j=$i-1;$y=$i-2;
-			$keys[]='[{
-				"text":"'.$data[$i]->name.'",
-				"callback_data":"'.$data[$i]->start.'"
-			},
-			{
-				"text":"'.$data[$j]->name.'",
-				"callback_data":"'.$data[$j]->start.'"
-			},
-			{
-				"text":"'.$data[$y]->name.'",
-				"callback_data":"'.$data[$y]->start.'"
-			}
-			]';
-			if ($i==59){
-                $keys[]='[{
-                "text":"صفحه بعد",
-                "callback_data":"nextpage"    
-                }]';
+			$keys[]=[
+
+                [
+				"text"=>$data[$i]->name,
+				"callback_data"=>interlink([
+                    "goto"=>"quran@listshow",
+                    "from"=>"local"])
+                ],
+			[
+				"text"=>$data[$i-1]->name,
+				"callback_data"=>interlink([
+                    "goto"=>"quran@listshow",
+                    "from"=>"local"])
+            ],
+			[
+				"text"=>$data[$i-2]->name,
+				"callback_data"=>interlink([
+                    "goto"=>"quran@listshow",
+                    "from"=>"local"])
+            ],
+            [
+				"text"=>$data[$i-3]->name,
+				"callback_data"=>interlink([
+                    "goto"=>"quran@listshow",
+                    "id"=>$data[$i-3]->start])  
+            ]
+			]; 
             }
-        }
-        
-         return '{"inline_keyboard":['.implode(",", $keys).']}';
+            if($x==4)
+            {
+                $keys[]=[
+                        
+                    [
+                        "text"=>$data[112]->name,
+                        "callback_data"=>interlink([
+                            "goto"=>"quran@listshow",
+                            "from"=>"local"])
+                        ],
+                    [
+                        "text"=>$data[113]->name,
+                        "callback_data"=>interlink([
+                            "goto"=>"quran@listshow",
+                            "from"=>"local"])
+                    ]
+                        ];
+                $keys[]=[
+                    [
+                    "text"=>" صفحه قبل",
+                    "callback_data"=>interlink([
+                        "goto"=>"quran@listshow",
+                        "text"=>"next".$b])  
+                    ]
+                    ];        
+            }
+           else{   
+          
+            $keys[]=[
+                [
+                "text"=>"صفحه بعد",
+                "callback_data"=>interlink([
+                    "goto"=>"quran@listshow",
+                    "text"=>"next".$x])  
+                ],
+                [
+                    "text"=>"صفحه قبل",
+                    "callback_data"=>interlink([
+                        "goto"=>"quran@listshow",
+                        "text"=>"next".$b])  
+                    ]
+             ];
+
+            } 
+         return json_encode(["inline_keyboard"=>$keys]);
         
     }
-    public function nextlist()
-    {
-            $data=\App\suraList::get();
-            $keys=[];
-        for ($i=62; $i<=114;$i+=3) {
-			$j=$i-1;$y=$i-2;
-			$keys[]='[{
-				"text":"'.$data[$i]->name.'",
-				"callback_data":"'.$data[$i]->start.'"
-			},
-			{
-				"text":"'.$data[$j]->name.'",
-				"callback_data":"'.$data[$j]->start.'"
-			},
-			{
-				"text":"'.$data[$y]->name.'",
-				"callback_data":"'.$data[$y]->start.'"
-			}
-			]';
-			
-             } 
+    // public function nextlist()
+    // {
+    //         $data=\App\suraList::get();
+    //         $keys=[];
+    //     for ($i=63; $i<=112;$i+=4) {
+	// 		$j=$i-1;$y=$i-2;
+	// 		$keys[]='[{
+	// 			"text":"'.$data[$i]->name.'",
+	// 			"callback_data":"'.$data[$i]->start.'"
+	// 		},
+	// 		{
+	// 			"text":"'.$data[$j]->name.'",
+	// 			"callback_data":"'.$data[$j]->start.'"
+	// 		},
+	// 		{
+	// 			"text":"'.$data[$y]->name.'",
+	// 			"callback_data":"'.$data[$y]->start.'"
+    //         },
+    //         {
+	// 			"text":"'.$data[$i-3]->name.'",
+	// 			"callback_data":"'.$data[$i-3]->start.'"
+	// 		}
+	// 		]';
+    //          } 
+    //          $keys[]='[{
+    //             "text":"'.$data[113]->name.'",
+    //             "callback_data":"'.$data[113]->start.'"    
+    //             },
+    //             {
+    //                 "text":"'.$data[112]->name.'",
+    //                 "callback_data":"'.$data[112]->start.'"
+    //                 }
+
+    //             ]';
+    //          $keys[]='[{
+    //             "text":"صفحه قبل",
+    //             "callback_data":"backpage"    
+    //             }]';
             
         
-         return '{"inline_keyboard":['.implode(",", $keys).']}';
+    //      return '{"inline_keyboard":['.implode(",", $keys).']}';
         
-    }
+    // }
 }

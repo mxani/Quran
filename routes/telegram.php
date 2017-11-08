@@ -2,13 +2,6 @@
 use XB\theory\Shoot;
 use XB\telegramMethods\sendMessage;
 
-// $this->trigger(function($u){
-//     return true;
-// },function($u){
-//     Storage::put("updates/last.json", "$u\n\n".
-//     file_get_contents('php://input')."\n\n"
-//     );
-// });
 
 
 $this->trigger(function(&$u){
@@ -36,6 +29,9 @@ $this->trigger(function($u){
     return !empty ($u->callback_query->data) &&  array_search( $u->callback_query->data,["","next","back","showpagetopage"] )  ;
 },'quran@gallery');//becuse didnt reeds first element i write empity element here->["","next","back"] 
 
+if (!empty($this->detect->data->goto)){
+    $this->trigger(function($u){ return true ;},$this->detect->data->goto);}
+
 $this->trigger(function($u){
     if(empty($u->message->text)){
         return false;
@@ -54,6 +50,10 @@ $this->trigger(function($u){
 $this->trigger(function(&$u){
     return !empty ($u->callback_query->id) && $u->callback_query->data=="nextpage";
 },'quran@secendlistshow');
+
+$this->trigger(function(&$u){
+    return !empty ($u->callback_query->id) && $u->callback_query->data=="backpage";
+},'quran@listshow');
 
 $this->trigger(function($u,&$s){
     if(empty($u->callback_query->data)){
