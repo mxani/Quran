@@ -347,11 +347,13 @@ class quran extends Magazine
     
             $data=\App\suraList::get();
             $keys=[];
+    
+           
       if (!empty ($this->detect->data) && $this->detect->data->text=="next"."1")
       {
       $valuei=31;
       $max=56;
-      $x=2;$b=1;
+      $x=2;$b=0;
       }
       elseif(!empty ($this->detect->data) && $this->detect->data->text=="next"."2")
       {
@@ -366,12 +368,13 @@ class quran extends Magazine
         $max=112;
         $x=4;$b=2;
       }
-      else
-      {
+      else{
         $valuei=3;
         $max=28;
-        $x=1;$b=0;
+        $b=0;
+        $x=1;
       }
+     
         for ($i=$valuei; $i<=$max;$i+=4) {
 			$j=$i-1;$y=$i-2;
 			$keys[]=[
@@ -428,6 +431,17 @@ class quran extends Magazine
                     ]
                     ];        
             }
+
+            elseif($x==1){
+                $keys[]=[
+                    [
+                    "text"=>"صفحه بعد",
+                    "callback_data"=>interlink([
+                        "goto"=>"quran@listshow",
+                        "text"=>"next".$x])  
+                    ]
+                    ];
+            }
            else{   
           
             $keys[]=[
@@ -445,7 +459,7 @@ class quran extends Magazine
                     ]
              ];
 
-            } 
+            } echo($b);
          return json_encode(["inline_keyboard"=>$keys]);
         
     }
