@@ -71,7 +71,20 @@ class quran extends Magazine
 
     public function pagetopage($u)
     {
+    
+        $data=\App\suraList::get();
+
+        if(empty($this->detect->data))
+        {
             $i=$u->message->text;
+            
+        }
+        else{ 
+            $i=$this->detect->data->text;
+           
+        }
+        $sureh=\App\suraList::where("start",">=",$i)->get()->first();
+   dd($sureh);
         if ($i>0&& $i<605) {
             if ($i<10) {
                 $s="00".$i;
@@ -82,34 +95,53 @@ class quran extends Magazine
             if (100<=$i &&604>=$i) {
                 $s=$i;
             }
-                
-            $send=new sendMessage([
-            'chat_id'=>$u->message->from->id,
-            'text'=>"<a href='http://www.searchtruth.org/quran/images1/$s.jpg'>$s</a> ",
-            'parse_mode'=> "html",
-            'reply_markup'=>'{"inline_keyboard":[
-				  [
-				  {
-				  "text":"next",
-				  "callback_data":"next"
-				  },
-				  {
-				  "text":"back",
-				  "callback_data":"back"
-				  }
-				  ]
-		  ]
-		  }'
-            ]);
-                $send();
-        } else {
-            $send=new sendMessage([
+        }  
+        else {
+            $send=new editMessageText([
             'chat_id'=>$u->message->from->id,
             'text'=>" خطا \nشماره صفحه را عددی بین ۱تا ۶۰۴ انتخاب کنید ",
             'parse_mode'=> "html",
             ]);
                 $send();
+            }
+        $text="<a href='http://www.searchtruth.org/quran/images1/$s.jpg'>🌸🌼سوره مبارکه:$sureh->name 🌸🌼</a>\n ".
+        "▪️"."جزء:".\App\Page::where("id",$i)->get()->first()->chapter.
+        "                                              ".
+        "📝"."صفحه:".$i."\n".
+        " ▪️"."تعداد آیات:".$sureh->verses."\n";
+        if ($this->detect->type=='callback_query'){
+            $send=new editMessageText([
+                'chat_id'=>$this->update->callback_query->message->chat->id,
+                'message_id'=>$this->update->callback_query->message->message_id,
+                'text'=>$text,
+                'parse_mode'=> "html",
+                'reply_markup'=> $this->kgnt1($i),
+                ]);
+                    $send();
         }
+        else{      
+        $send=new editMessageText([
+        'chat_id'=>$u->message->from->id,
+        'text'=>"<a href='http://www.searchtruth.org/quran/images1/$s.jpg'>$s</a> ",
+        'parse_mode'=> "html",
+        'reply_markup'=>'{"inline_keyboard":[
+                [
+                {
+                "text":"next",
+                "callback_data":"next"
+                },
+                {
+                "text":"back",
+                "callback_data":"back"
+                }
+                ]
+        ]
+        }'
+        ]);
+            $send();
+    }
+
+    
     }
   
     public function listshow($u)
@@ -137,17 +169,7 @@ class quran extends Magazine
         }
     }
 
-    public function secendlistshow($u)
-    {
-        $send=new sendMessage([
-            'chat_id'=>$u->callback_query->from->id,
-            'text'=>"فهرست سوره ها ",
-            'parse_mode'=> "html",
-            'reply_markup'=> $this->nextlist(),
-
-        ]);
-        $send();
-    } 
+  
     public function gotolist($u)
 
     {
@@ -376,32 +398,33 @@ class quran extends Magazine
       }
      
         for ($i=$valuei; $i<=$max;$i+=4) {
-			$j=$i-1;$y=$i-2;
+            // $j=$i-1;$y=$i-2;
 			$keys[]=[
 
                 [
 				"text"=>$data[$i]->name,
 				"callback_data"=>interlink([
-                    "goto"=>"quran@listshow",
-                    "from"=>"local"])
+                    "goto"=>"quran@pagetopage",
+                    "text"=>$data[$i]->start])
                 ],
 			[
 				"text"=>$data[$i-1]->name,
 				"callback_data"=>interlink([
-                    "goto"=>"quran@listshow",
-                    "from"=>"local"])
+                    "goto"=>"quran@pagetopage",
+                    "text"=>$data[$i-1]->start])
+                    
             ],
 			[
 				"text"=>$data[$i-2]->name,
 				"callback_data"=>interlink([
-                    "goto"=>"quran@listshow",
-                    "from"=>"local"])
+                    "goto"=>"quran@pagetopage",
+                    "text"=>$data[$i-2]->start])
             ],
             [
 				"text"=>$data[$i-3]->name,
 				"callback_data"=>interlink([
-                    "goto"=>"quran@listshow",
-                    "id"=>$data[$i-3]->start])  
+                    "goto"=>"quran@pagetopage",
+                    "text"=>$data[$i-3]->start])  
             ]
 			]; 
             }
@@ -412,14 +435,14 @@ class quran extends Magazine
                     [
                         "text"=>$data[112]->name,
                         "callback_data"=>interlink([
-                            "goto"=>"quran@listshow",
-                            "from"=>"local"])
+                            "goto"=>"quran@pagetopage",
+                            "text"=>$data[112]->strat])
                         ],
                     [
                         "text"=>$data[113]->name,
                         "callback_data"=>interlink([
-                            "goto"=>"quran@listshow",
-                            "from"=>"local"])
+                            "goto"=>"quran@pagetopage",
+                            "text"=>$data[113]->strat])
                     ]
                         ];
                 $keys[]=[
@@ -459,51 +482,28 @@ class quran extends Magazine
                     ]
              ];
 
-            } echo($b);
+            } 
          return json_encode(["inline_keyboard"=>$keys]);
         
     }
-    // public function nextlist()
-    // {
-    //         $data=\App\suraList::get();
-    //         $keys=[];
-    //     for ($i=63; $i<=112;$i+=4) {
-	// 		$j=$i-1;$y=$i-2;
-	// 		$keys[]='[{
-	// 			"text":"'.$data[$i]->name.'",
-	// 			"callback_data":"'.$data[$i]->start.'"
-	// 		},
-	// 		{
-	// 			"text":"'.$data[$j]->name.'",
-	// 			"callback_data":"'.$data[$j]->start.'"
-	// 		},
-	// 		{
-	// 			"text":"'.$data[$y]->name.'",
-	// 			"callback_data":"'.$data[$y]->start.'"
-    //         },
-    //         {
-	// 			"text":"'.$data[$i-3]->name.'",
-	// 			"callback_data":"'.$data[$i-3]->start.'"
-	// 		}
-	// 		]';
-    //          } 
-    //          $keys[]='[{
-    //             "text":"'.$data[113]->name.'",
-    //             "callback_data":"'.$data[113]->start.'"    
-    //             },
-    //             {
-    //                 "text":"'.$data[112]->name.'",
-    //                 "callback_data":"'.$data[112]->start.'"
-    //                 }
 
-    //             ]';
-    //          $keys[]='[{
-    //             "text":"صفحه قبل",
-    //             "callback_data":"backpage"    
-    //             }]';
-            
-        
-    //      return '{"inline_keyboard":['.implode(",", $keys).']}';
-        
-    // }
+    public function kgnt1($i)
+    {
+        $keys[]=[
+            [
+            "text"=>"صفحه بعد",
+            "callback_data"=>interlink([
+                "goto"=>"quran@pagetopage",
+                "text"=>$i+1])  
+            ],
+            [
+                "text"=>"صفحه قبل",
+                "callback_data"=>interlink([
+                    "goto"=>"quran@pagetopage",
+                    "text"=>$i-1])  
+                ]
+         ];
+         return json_encode(["inline_keyboard"=>$keys]);
+    }    
+
 }

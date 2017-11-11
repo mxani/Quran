@@ -47,9 +47,6 @@ $this->trigger(function($u){
     return !empty ($u->callback_query->data) &&  array_search( $u->callback_query->data,$surapage )  ;
 },'quran@gotolist');
 
-$this->trigger(function(&$u){
-    return !empty ($u->callback_query->id) && $u->callback_query->data=="nextpage";
-},'quran@secendlistshow');
 
 $this->trigger(function(&$u){
     return !empty ($u->callback_query->id) && $u->callback_query->data=="backpage";
