@@ -9,7 +9,7 @@ $this->trigger(function(&$u){
 },'start@showMenu');
 
 $this->trigger(function(&$u){
-    return !empty($u->message->text) && $u->message->text=='درباره ربات';
+    return !empty($u->message->text) && $u->message->text=='🤖درباره ربات';
 },'start@aboutUs');
 
 $this->trigger(function(&$u){
@@ -17,11 +17,11 @@ $this->trigger(function(&$u){
 },'quran@show');
 
 $this->trigger(function(&$u){
-    return !empty($u->message->text) && $u->message->text=='نمایش تصویر قرآن';
+    return !empty($u->message->text) && $u->message->text=='🔎جستجوی صفحات';
 },'quran@pageShow');
 
 $this->trigger(function(&$u){
-    return !empty($u->message->text) && $u->message->text=='فهرست سوره ها';
+    return !empty($u->message->text) && $u->message->text=='📋فهرست سوره ها';
 },'quran@listshow');
 
 $this->trigger(function($u){
@@ -52,16 +52,16 @@ $this->trigger(function(&$u){
     return !empty ($u->callback_query->id) && $u->callback_query->data=="backpage";
 },'quran@listshow');
 
-$this->trigger(function($u,&$s){
-    if(empty($u->callback_query->data)){
-        return false;
-    }
-    $data=explode('/',$u->callback_query->data);
-    if($data[0]=='page' && 
-        is_numeric($data[1]) &&
-        $data[1]>=1 && $data[1]<=604){
-            $s=(int)$data[1];
-            return true;
-        }
-    return false;
-},'quran@goto');
+// $this->trigger(function($u,&$s){
+//     if(empty($u->callback_query->data)){
+//         return false;
+//     }
+//     $data=explode('/',$u->callback_query->data);
+//     if($data[0]=='page' && 
+//         is_numeric($data[1]) &&
+//         $data[1]>=1 && $data[1]<=604){
+//             $s=(int)$data[1];
+//             return true;
+//         }
+//     return false;
+// },'quran@goto');

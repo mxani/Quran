@@ -13,6 +13,7 @@ class quran extends Magazine
 
     public function show($u)
     {
+        $page=$
         $page = Page::first();
 
         $send = new sendMessage( [
@@ -54,7 +55,7 @@ class quran extends Magazine
         
         $send=new sendMessage([
             'chat_id'=>$u->message->from->id,
-            'text'=>"اگر می خواهید صفحه به صفحه قرآن را ورق بزنید نمایش صفحه به صفحه را انتخاب کنید در غیر این صورت صفحه مورد نظر خود را وارد کنید ",
+            'text'=>"✔️شماره صفحه مورد نظر خود را وارد کنید ؟ \n\n.در قسمت'جستجوی صفحه' شما می توانید در هر مرحله شماره صفحه را وارد کنید ",
             'parse_mode'=> "html",
             'reply_markup'=>'{"inline_keyboard":[
 				  [
@@ -83,8 +84,13 @@ class quran extends Magazine
             $i=$this->detect->data->text;
            
         }
-        $sureh=\App\suraList::where("start",">=",$i)->get()->first();
-   dd($sureh);
+        $sureh=\App\Page::where("id",">=",$i)->get()->first()->sura;
+        $secsure=explode(",",$sureh);
+        if(!empty($secsure[1]))
+        { 
+            $sureh=$secsure[1];
+        }
+        $tedad=\App\suraList::where("name",$sureh)->get()->first()->verses;
         if ($i>0&& $i<605) {
             if ($i<10) {
                 $s="00".$i;
@@ -104,11 +110,11 @@ class quran extends Magazine
             ]);
                 $send();
             }
-        $text="<a href='http://www.searchtruth.org/quran/images1/$s.jpg'>🌸🌼سوره مبارکه:$sureh->name 🌸🌼</a>\n ".
+        $text="<a href='http://www.searchtruth.org/quran/images1/$s.jpg'>🌸🌼سوره مبارکه:$sureh 🌸🌼</a>\n ".
         "▪️"."جزء:".\App\Page::where("id",$i)->get()->first()->chapter.
         "                                              ".
         "📝"."صفحه:".$i."\n".
-        " ▪️"."تعداد آیات:".$sureh->verses."\n";
+        " ▪️"."تعداد آیات:".$tedad."\n";
         if ($this->detect->type=='callback_query'){
             $send=new editMessageText([
                 'chat_id'=>$this->update->callback_query->message->chat->id,
@@ -120,7 +126,7 @@ class quran extends Magazine
                     $send();
         }
         else{      
-        $send=new editMessageText([
+        $send=new sendMessage([
         'chat_id'=>$u->message->from->id,
         'text'=>"<a href='http://www.searchtruth.org/quran/images1/$s.jpg'>$s</a> ",
         'parse_mode'=> "html",
@@ -150,7 +156,7 @@ class quran extends Magazine
             $send=new editMessageText([
                 'chat_id'=>$this->update->callback_query->message->chat->id,
                 'message_id'=>$this->update->callback_query->message->message_id,
-                'text'=>"فهرست سوره ها ",
+                'text'=>" 📋فهرست سوره ها: ",
                 'parse_mode'=> "html",
                 'reply_markup'=> $this->keygnt(),
     
@@ -160,7 +166,7 @@ class quran extends Magazine
         else{ 
         $send=new sendMessage([
             'chat_id'=>$u->message->from->id,
-            'text'=>"فهرست سوره ها ",
+            'text'=>" 📋فهرست سوره ها: ",
             'parse_mode'=> "html",
             'reply_markup'=> $this->keygnt(),
 
@@ -307,38 +313,37 @@ class quran extends Magazine
             }
         }
     }
-    public function goto($u, $s)
+    public function goto($u)
     {
-        $page = Page::find( $s );
-
-        $keys = [ ];
-        if ($s + 1 <= 604) {
-            $keys[0][] = [ 'text' => 'صفحه بعد ◀', 'callback_data' => 'page/' . ( $page->id + 1 ) ];
-        }
-        if ($s - 1 > 0) {
-            $keys[0][] = [ 'text' => '▶ صفحه قبل', 'callback_data' => 'page/' . ( $page->id - 1 ) ];
-        }
-        if ($s + 10 <= 604) {
-            $keys[1][] = [ 'text' => '10 صفحه بعد ⏪', 'callback_data' => 'page/' . ( $page->id + 10 ) ];
-        }
-        if ($s - 10 > 0) {
-            $keys[1][] = [ 'text' => '⏩ 10 صفحه قبل', 'callback_data' => 'page/' . ( $page->id - 10 ) ];
-        }
-        if ($s + 100 <= 604) {
-            $keys[2][] = [ 'text' => '100 صفحه بعد ⏮', 'callback_data' => 'page/' . ( $page->id + 100 ) ];
-        }
-        if ($s - 100 > 0) {
-            $keys[2][] = [ 'text' => '⏭ 100 صفحه قبل', 'callback_data' => 'page/' . ( $page->id - 100 ) ];
-        }
+        //$page = Page::find( $s );
+        $i=$this->detect->data->page;
+        $page=\App\Page::where("id",$i)->get()->first();
+        // $keys = [ ];
+        // if ($s + 1 <= 604) {
+        //     $keys[0][] = [ 'text' => 'صفحه بعد ◀', 'callback_data' => 'page/' . ( $page->id + 1 ) ];
+        // }
+        // if ($s - 1 > 0) {
+        //     $keys[0][] = [ 'text' => '▶ صفحه قبل', 'callback_data' => 'page/' . ( $page->id - 1 ) ];
+        // }
+        // if ($s + 10 <= 604) {
+        //     $keys[1][] = [ 'text' => '10 صفحه بعد ⏪', 'callback_data' => 'page/' . ( $page->id + 10 ) ];
+        // }
+        // if ($s - 10 > 0) {
+        //     $keys[1][] = [ 'text' => '⏩ 10 صفحه قبل', 'callback_data' => 'page/' . ( $page->id - 10 ) ];
+        // }
+        // if ($s + 100 <= 604) {
+        //     $keys[2][] = [ 'text' => '100 صفحه بعد ⏮', 'callback_data' => 'page/' . ( $page->id + 100 ) ];
+        // }
+        // if ($s - 100 > 0) {
+        //     $keys[2][] = [ 'text' => '⏭ 100 صفحه قبل', 'callback_data' => 'page/' . ( $page->id - 100 ) ];
+        // }
 
         $edit = new editMessageText( [
             'chat_id'      => $u->callback_query->message->chat->id,
             'message_id'   => $u->callback_query->message->message_id,
-            'text'         => $this->msgText( $page ),
+            'text'         => $this->msgText($page),
             'parse_mode'   => 'html',
-            'reply_markup' => json_encode( [
-                'inline_keyboard' => $keys,
-            ] ),
+            'reply_markup'=> $this->kgnt1($i),
         ] );
         if (! $edit()) {
             \Storage::append( 'logs/last.json', "error: " . $edit->getError() );
@@ -447,7 +452,7 @@ class quran extends Magazine
                         ];
                 $keys[]=[
                     [
-                    "text"=>" صفحه قبل",
+                    "text"=>" ▶️صفحه قبل ",
                     "callback_data"=>interlink([
                         "goto"=>"quran@listshow",
                         "text"=>"next".$b])  
@@ -458,7 +463,7 @@ class quran extends Magazine
             elseif($x==1){
                 $keys[]=[
                     [
-                    "text"=>"صفحه بعد",
+                    "text"=>"صفحه بعد ◀️",
                     "callback_data"=>interlink([
                         "goto"=>"quran@listshow",
                         "text"=>"next".$x])  
@@ -469,13 +474,13 @@ class quran extends Magazine
           
             $keys[]=[
                 [
-                "text"=>"صفحه بعد",
+                "text"=>"صفحه بعد ◀️",
                 "callback_data"=>interlink([
                     "goto"=>"quran@listshow",
                     "text"=>"next".$x])  
                 ],
                 [
-                    "text"=>"صفحه قبل",
+                    "text"=>" ▶️ صفحه قبل",
                     "callback_data"=>interlink([
                         "goto"=>"quran@listshow",
                         "text"=>"next".$b])  
@@ -489,6 +494,28 @@ class quran extends Magazine
 
     public function kgnt1($i)
     {
+        if (!empty($this->detect->data->text)){  
+              $keys[]=[
+        
+                       [
+                           "text"=>"نمایش متن",
+                           "callback_data"=>interlink([
+                               "goto"=>"quran@goto",
+                               "page"=>$i])  
+                         ]
+                           ]; 
+        }
+        if(!empty($this->detect->data->page)){
+            $keys[]=[
+                
+                [
+                    "text"=>"بازگشت به نمایش تصویر",
+                    "callback_data"=>interlink([
+                        "goto"=>"quran@pagetopage",
+                        "text"=>$i])  
+                    ]
+                    ];  
+        }
         $keys[]=[
             [
             "text"=>"صفحه بعد",
