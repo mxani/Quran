@@ -325,7 +325,7 @@ class quran extends Magazine
                         ]
                 ];           
             }
-          elseif($i=1){
+          elseif($i==1){
             $keys[]=[
                 [
                 "text"=>"صفحه بعد◀️",
@@ -335,7 +335,7 @@ class quran extends Magazine
                 ]
                 ];
            }
-           elseif($i=604){
+           elseif($i==604){
             $keys[]=[
                 [
                     "text"=>"▶️صفحه قبل",
