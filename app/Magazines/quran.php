@@ -85,7 +85,6 @@ class quran extends Magazine
                 $sureh=$secsure[1];
             }
       
-            //$tedad=\App\suraList::where("name",$sureh)->get()->first()->verses;
         $text="<a href='http://www.searchtruth.org/quran/images1/$s.jpg'>🌸سوره مبارکه:$sureh 🌸</a>\n ".
         "▪️"."جزء:".\App\Page::where("id",$i)->get()->first()->chapter.
         "                                              ".
@@ -351,7 +350,7 @@ class quran extends Magazine
 
             }
    
-        if(!empty($this->detect->data->page)){
+        if(!empty($this->detect->data->page)){//dd($i);
             $keys[]=[
                 
                 [
@@ -361,6 +360,7 @@ class quran extends Magazine
                         "text"=>$i])  
                     ]
                     ];  
+        if ($i>1 && $i<604){    
             $keys[]=[
                 [
                 "text"=>"صفحه بعد◀️",
@@ -374,7 +374,28 @@ class quran extends Magazine
                         "goto"=>"quran@goto",
                         "page"=>$i-1])  
                     ]
-                    ];        
+                    ];   
+                }   
+        elseif($i==1){
+            $keys[]=[
+                [
+                "text"=>"صفحه بعد◀️",
+                "callback_data"=>interlink([
+                    "goto"=>"quran@pagetopage",
+                    "text"=>$i+1])  
+                ]
+                ];
+            }
+            elseif($i==604){
+            $keys[]=[
+                [
+                    "text"=>"▶️صفحه قبل",
+                    "callback_data"=>interlink([
+                        "goto"=>"quran@pagetopage",
+                        "text"=>$i-1])  
+                    ]
+            ]; 
+            }  
         }
        
          return json_encode(["inline_keyboard"=>$keys]);
