@@ -66,7 +66,8 @@ class quran extends Magazine
             }
         }  
         else {
-            if( $u->message->text!=='🤖درباره ربات' && $u->message->text!=='🔎جستجوی صفحات' && $u->message->text!=='📋فهرست سوره ها')
+            if( $u->message->text!=='🤖درباره ربات' && $u->message->text!=='🔎جستجوی صفحات' 
+            && $u->message->text!=='📋فهرست سوره ها' && $u->message->text!=='/start')
             {  
             $send=new sendMessage([
             'chat_id'=>$u->message->from->id,
@@ -77,17 +78,18 @@ class quran extends Magazine
             }return;
         }
             $sureh=\App\Page::where("id",">=",$i)->get()->first()->sura;
+             
             $secsure=explode(",",$sureh);
             if(!empty($secsure[1]))
             { 
                 $sureh=$secsure[1];
             }
-            $tedad=\App\suraList::where("name",$sureh)->get()->first()->verses;
+      
+            //$tedad=\App\suraList::where("name",$sureh)->get()->first()->verses;
         $text="<a href='http://www.searchtruth.org/quran/images1/$s.jpg'>🌸سوره مبارکه:$sureh 🌸</a>\n ".
         "▪️"."جزء:".\App\Page::where("id",$i)->get()->first()->chapter.
         "                                              ".
-        "📝"."صفحه:".$i."\n".
-        " ▪️"."تعداد آیات:".$tedad."\n";
+        "📝"."صفحه:".$i."\n";
         if ($this->detect->type=='callback_query'){
             $send=new editMessageText([
                 'chat_id'=>$this->update->callback_query->message->chat->id,
@@ -159,18 +161,19 @@ class quran extends Magazine
 
     public function msgText($page)
     {
-        $msg = "سوره:🌼🌺 " . $page->sura ."🌼🌺".
+        $msg = "🌸"."سوره مبارکه: " . $page->sura ."🌸"."\n".
+        "▪️"."جزء($page->chapter)\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" .
+        "📝"."صفحه($page->id)" . "\n".
                 "\n\n==============================\n" .
                 str_replace( [ '<(', ')>', ',', 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ' ],
                     [
                         " «(",
                         ")» ",
                         "",
-                        "\n🌸 بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ 🌸\n\n"
+                        "\n🌺 بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ 🌺\n\n"
                     ], $page->text ) .
-                "\n______________________________\n" .
-                "جزء($page->chapter)\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" .
-                "صفحه($page->id)" . "\n";
+                "\n______________________________\n"
+                ;
 
         return $msg;
     }
@@ -246,13 +249,13 @@ class quran extends Magazine
                         "text"=>$data[112]->name,
                         "callback_data"=>interlink([
                             "goto"=>"quran@pagetopage",
-                            "text"=>$data[112]->strat])
+                            "text"=>$data[112]->start])
                         ],
                     [
                         "text"=>$data[113]->name,
                         "callback_data"=>interlink([
                             "goto"=>"quran@pagetopage",
-                            "text"=>$data[113]->strat])
+                            "text"=>$data[113]->start])
                     ]
                         ];
                 $keys[]=[
